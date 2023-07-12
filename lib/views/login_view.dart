@@ -34,73 +34,54 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+    return Column(
+      children: [
+        TextField(
+          controller: _email,
+          enableSuggestions: false,
+          autocorrect: false,
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
+            hintText: 'Enter your email here',
+          ),
         ),
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          // switch for snapshot state
-          // the way to get result of the future state
-          // before the connection finish, the loading will be shown
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              return Column(
-                children: [
-                  TextField(
-                    controller: _email,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your email here',
-                    ),
-                  ),
-                  TextField(
-                    controller: _password,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your password here',
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      // authentication
-                      final email = _email.text;
-                      final password = _password.text;
+        TextField(
+          controller: _password,
+          obscureText: true,
+          enableSuggestions: false,
+          autocorrect: false,
+          decoration: const InputDecoration(
+            hintText: 'Enter your password here',
+          ),
+        ),
+        TextButton(
+          onPressed: () async {
+            // authentication
+            final email = _email.text;
+            final password = _password.text;
 
-                      try {
-                        final userCredential = await FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                          email: email,
-                          password: password,
-                        );
-                        print(userCredential);
-                        // specific exception, known from e.runtimeType below
-                      } on FirebaseAuthException catch (e) {
-                        if (e.code == 'user-not-found') {
-                          print('User not found');
-                        } else if (e.code == 'wrong-password') {
-                          print('Wrong password');
-                        } else {
-                          print(e.code);
-                        }
-                      }
-                    },
-                    child: const Text('Login'),
-                  ),
-                ],
+            try {
+              final userCredential = await FirebaseAuth.instance
+                  .signInWithEmailAndPassword(
+                email: email,
+                password: password,
               );
-            default:
-              return Text('Loading..');
-          }
-        },
-      ),
+              print(userCredential);
+              // specific exception, known from e.runtimeType below
+            } on FirebaseAuthException catch (e) {
+              if (e.code == 'user-not-found') {
+                print('User not found');
+              } else if (e.code == 'wrong-password') {
+                print('Wrong password');
+              } else {
+                print(e.code);
+              }
+            }
+          },
+          child: const Text('Login'),
+        ),
+        TextButton(onPressed: (){FirebaseAuth.instance.signOut();}, child: Text('log out'))
+      ],
     );
   }
 }
