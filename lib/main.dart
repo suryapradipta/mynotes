@@ -23,7 +23,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: HomePage(),
+      routes: {
+        '/login/': (context)=> LoginView(),
+        '/register/': (context)=> RegisterView(),
+      },
     );
+
   }
 }
 
